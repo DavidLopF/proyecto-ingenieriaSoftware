@@ -21,17 +21,22 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE'
       });
-    }
-  }
+    } 
+  };
+
+  
+
   User.init({
     first_name: DataTypes.STRING,
     last_name: DataTypes.STRING,
     age: DataTypes.INTEGER,
     email: DataTypes.STRING,
-    dni: DataTypes.STRING
+    dni: DataTypes.STRING,
+    password: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'User',
   });
+
   return User;
 };
