@@ -7,7 +7,6 @@ class AuthController {
 
     register(req, res) {
         const { first_name, last_name, age, dni, email, type, password } = req.body;
-
         const salt = bcrypt.genSaltSync(10);
         const pass = bcrypt.hashSync(password, salt);
         const userCreate = {
@@ -18,9 +17,7 @@ class AuthController {
             email,
             password: pass,
         }
-
         db.User.findOne({
-            //buscar en la base de datos donde el email o el dni coincidan con los que se envian
             where: {
                 [db.Sequelize.Op.or]: [{ email }, { dni }]
             }
@@ -57,8 +54,6 @@ class AuthController {
         });
 
     }
-
-
     login(req, res) {
         const { email, password } = req.body;
         db.User.findOne({
@@ -72,21 +67,45 @@ class AuthController {
                 });
             } else {
                 if (bcrypt.compareSync(password, user.password)) {
-                    const token = await generateJSW(user, user.type);
-                    return res.status(200).json({
-                        message: 'User logged in successfully',
-                        token: token
+                    //encontrar el tipo del usuario 
+                    const admin = await db.Admin.findOne({
+                        where: {
+                            user_id: user.id
+                        }
                     });
+                    const competitor = await db.Competitor.findOne({
+                        where: {
+                            user_id: user.id
+                        }
+                    });
+                    if (admin) {
+                        const token = await generateJSW(user, "admin");
+                        const us = user.dataValues
+                        delete us.password
+                        us.type = "admin"
+                        return res.render('user/home', {
+                            user: us,
+                            token: token
+                        });
+                    } else if (competitor) {
+                        const token = await generateJSW(user, "competitor");
+                        const us = user.dataValues
+                        delete us.password
+                        us.type = "competitor"
+                        console.log(us)
+                        return res.render('user/home', {
+                            user: us,
+                            token: token
+                        });
+                    }
                 } else {
-                    return res.status(400).json({
-                        message: 'Password incorrect'
+                    return res.render('user/home', {
+                        message: 'Contraseña incorrecta'
                     });
                 }
             }
         });
-
     }
-
 }
 
 

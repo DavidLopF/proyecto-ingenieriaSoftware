@@ -28,8 +28,19 @@ const verifyJWT = (token) => {
     })
 }
 
+const getJWT = (req, res) => {
+    try {
+        const token = req.headers.authorization.split(" ")[1]
+        return token
+    } catch (e) {
+        console.log(e)
+        return false
+    }
+}
+
 
 module.exports = {
     generateJSW,
-    verifyJWT
+    verifyJWT,
+    getJWT
 };

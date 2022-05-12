@@ -1,0 +1,35 @@
+{{#if token}}
+{{> navbar}}
+<div class="columns is-centered mt-6">
+    <div class="column has-text-centered is-three-quarters">
+        <article class="message is-success">
+            <div class="message-header">
+                <p id="title_message"></p>
+            </div>
+            <div class="message-body" id="message_body">
+                Enhorabuena estas en el torneo de programacion organizado por la uiniversidad el bosque, a continuación
+                podras encontrar las siguientes opciones:
+            </div>
+        </article>
+    </div>
+</div>
+{{else}}
+{{> error}}
+{{/if}}
+
+<script>
+    const title_message = document.getElementById('title_message');
+    const message_body = document.getElementById('message_body');
+    localStorage.setItem('token', '{{token}}');
+    const user = {
+        name: '{{user.first_name}}' + ' {{user.last_name}}',
+        email: '{{user.email}}',
+        id: '{{user.id}}',
+        type: '{{user.type}}',
+    }
+    localStorage.setItem('user', JSON.stringify(user));
+    title_message.innerHTML = 'Bienvenido ' + user.name;
+    //message_body.innerHTML = "Enhorabuena estas en el torneo de programacion organizado por la uiniversidad el bosque, a continuación podras encontrar las siguientes opciones:";
+
+
+</script>
