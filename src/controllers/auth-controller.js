@@ -92,7 +92,6 @@ class AuthController {
                         const us = user.dataValues
                         delete us.password
                         us.type = "competitor"
-                        console.log(us)
                         return res.render('user/home', {
                             user: us,
                             token: token
