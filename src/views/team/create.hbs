@@ -1,0 +1,46 @@
+{{> navbar}}
+
+<section class="section animate__animated  animate__fadeIn">
+    <div class="container">
+        <div class="columns is-centered">
+            <div class="column  box is-three-quarters ">
+
+                <div class=' equal-height has-text-centered '>
+
+                    <figure><img src='https://sibcolombia.net/wp-content/uploads/2016/06/logo-ubosque.png' width="200"
+                            height="200"></figure>
+
+                </div>
+
+                <div class="login">
+                    <h1 class="title has-text-centered">Crear equipo</h1>
+                    <form action="/auth/login" method="POST">
+                        <div class="field">
+                            <label class="label">Email</label>
+                            <div class="control">
+                                <input class="input" type="text" name="email" placeholder="username">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Password</label>
+                            <div class="control">
+                                <input class="input" type="password" name="password" placeholder="Password">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="control has-text-centered mt-5 mb-5">
+                                <button class="button is-primary">Login</button>
+                                <a href="/view/register" class="button is-link">Register</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+{{> validateLogin}}

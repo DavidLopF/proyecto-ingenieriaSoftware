@@ -68,7 +68,7 @@ class Server {
             });
         } else {
             this.Server.listen(this.port, this.host, () => {
-                console.log(colors.bgWhite.blue(`Server running in ${this.host}:${this.port}`));
+                console.log(colors.bgWhite.blue(`Server running in http://${this.host}:${this.port}`));
             });
         }
     }

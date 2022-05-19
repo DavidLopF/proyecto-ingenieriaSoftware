@@ -23,9 +23,9 @@ class AuthController {
             }
         }).then(user => {
             if (user) {
-                return res.status(400).json({
-                    message: 'User already exists'
-                });
+                return res.render('user/home', {
+                    message: 'El usuario ya existe'
+                }); 
             } else {
                 db.User.create(userCreate).then(user => {
                     if (type === 1) {
@@ -33,8 +33,8 @@ class AuthController {
                             user_id: user.id
                         }).then(async admin => {
                             const token = await generateJSW(user, "admin");
-                            return res.status(201).json({
-                                message: 'User created successfully',
+                            return res.render('user/home', {
+                                user: user,
                                 token: token
                             });
                         });
@@ -43,8 +43,8 @@ class AuthController {
                             user_id: user.id
                         }).then(async competitor => {
                             const token = await generateJSW(user, "competitor");
-                            return res.status(201).json({
-                                message: 'User created successfully',
+                            return res.render('user/home', {
+                                user: user,
                                 token: token
                             });
                         });
@@ -62,8 +62,8 @@ class AuthController {
             }
         }).then(async user => {
             if (!user) {
-                return res.status(400).json({
-                    message: 'User not found'
+                return res.render('user/home', {
+                    message: 'No se ha encontrado el usuario'
                 });
             } else {
                 if (bcrypt.compareSync(password, user.password)) {

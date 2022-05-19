@@ -12,5 +12,9 @@ router.get('/home', (req, res) => {
     viewController.gethome(req, res)
 })
 
+router.get('/team/create', (req, res) => {
+    viewController.getcreateTeam(req, res)
+})
+
 
 module.exports = router
