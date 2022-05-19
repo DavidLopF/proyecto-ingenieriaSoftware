@@ -15,16 +15,23 @@ const generateJSW = (user, type) => {
 }
 
 
-const verifyJWT = (token) => {
-    return new Promise((resolve, reject) => {
-        jwt.verify(token, process.env.TOKET_KEY, (err, decoded) => {
-            if (err) {
-                console.log(err);
-                reject('error verifying token');
-            } else {
-                resolve(decoded);
-            }
+const validateAuth = (req, res, next) => {
+    const token = getJWT(req, res)
+    if (!token) {
+        return res.render('user/home', {
+            message: 'Error en la autenticación'
         })
+    }
+    jwt.verify(token, process.env.TOKET_KEY, (err, decoded) => {
+        if (err) {
+            return res.status(401).json({
+                ok: false,
+                message: 'token invalid'
+            })
+        }
+        req.user = decoded.user
+        req.type = decoded.type
+        next()
     })
 }
 
@@ -41,6 +48,6 @@ const getJWT = (req, res) => {
 
 module.exports = {
     generateJSW,
-    verifyJWT,
+    validateAuth,
     getJWT
 };

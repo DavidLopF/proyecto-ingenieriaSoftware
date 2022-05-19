@@ -18,6 +18,7 @@ class Server {
         this.userPath = '/user';
         this.authPath = '/auth';
         this.viewPath = '/view';
+        this.teamPath = '/team';
         this.middlewares();
         this.routes();
 
@@ -46,7 +47,8 @@ class Server {
     routes() {
         this.app.use(this.userPath, require('../routes/user-route'));
         this.app.use(this.authPath, require('../routes/auth'));
-        this.app.use(this.viewPath, require('../routes/view-routes'));
+        this.app.use(this.viewPath, require('../routes/view-route'));
+        this.app.use(this.teamPath, require('../routes/team-route'));
 
 
         this.app.get('/', (req, res) => {

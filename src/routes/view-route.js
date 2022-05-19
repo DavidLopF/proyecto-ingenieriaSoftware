@@ -1,6 +1,6 @@
 const { Router } = require('express')
 const router = Router()
-const { verifyJWT } = require('../helpers/jwt')
+const { validateAuth} = require('../helpers/jwt')
 const ViewController = require('../controllers/view-controller')
 const viewController = new ViewController();
 

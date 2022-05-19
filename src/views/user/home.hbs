@@ -1,4 +1,4 @@
-{{#if token}}
+
 {{> navbar}}
 <div class="columns is-centered mt-6 animate__animated animate__fadeInDown">
     <div class="column has-text-centered is-three-quarters">
@@ -22,10 +22,10 @@
                             <div class="media">
                                 <div class="media-content">
                                     <p class="title is-4">
-                                        <a href="/view/team/create">Crear equipo</a>
+                                        <a href="/view/team/create"id="create">Opciones equipo</a>
                                     </p>
                                     <p class="subtitle is-6">
-                                        Como aun no tienes un equipo asignado puedes crear uno
+                                        Aqui puedes ver la informaciond de tu equipo o bien crear un nuevo equipo
                                     </p>
                                 </div>
                             </div>
@@ -52,9 +52,7 @@
         </div>
     </div>
 </div>
-{{else}}
-{{> error}}
-{{/if}}
+
 <script>
     const title_message = document.getElementById('title_message');
     const message_body = document.getElementById('message_body');

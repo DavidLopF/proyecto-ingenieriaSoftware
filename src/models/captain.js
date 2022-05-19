@@ -10,10 +10,9 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Captain.belongsTo(models.User, {
-        foreignKey: 'user_id',
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE'
+      Captain.belongsTo(models.Competitor, {
+        foreignKey: 'competitor_id',
+        as: 'competitor'
       });
 
       Captain.belongsTo(models.Team, {
