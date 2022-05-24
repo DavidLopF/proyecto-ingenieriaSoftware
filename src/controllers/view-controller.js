@@ -5,10 +5,12 @@ class viewController {
     gethome(req, res) {
         res.render('user/home')
     }
-
+    getViewTeam(req, res) {
+       res.render('team/view')
+    }
     getcreateTeam(req, res) {
         res.render('team/create')
-    }   
+    }
 }
 
 

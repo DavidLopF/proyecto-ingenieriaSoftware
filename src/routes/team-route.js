@@ -10,6 +10,8 @@ router.route('/getbyuser/:id')
         teamController.getTeam(req, res);
     })
 
+
+
 router.route('/create')
     .post([
         validateAuth,

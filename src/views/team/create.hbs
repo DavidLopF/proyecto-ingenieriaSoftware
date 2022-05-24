@@ -53,7 +53,6 @@
     const user = localStorage.getItem('user');
     const tok = localStorage.getItem('token');
     const crear = document.getElementById('crear');
-
     crear.addEventListener('click', () => {
         //hacer peticion post a /team/create y enviando el token como header
         const team_name = document.querySelector('input[name=team_name]').value;
@@ -90,9 +89,7 @@
 
 
             });
-
     })
-
 </script>
 
 {{> validateLogin}}

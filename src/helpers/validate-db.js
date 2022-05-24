@@ -18,7 +18,6 @@ class validateDataBase {
                 }
             }).then(user => {
                 if (!user) {
-                    //enviar falso
                     resolve(false);
                 } else {
                     resolve(user);

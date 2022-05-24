@@ -1,6 +1,6 @@
 <script>
     //validar que el token este 
-    var token = localStorage.getItem('token');
+    const token = localStorage.getItem('token');
     if(token === null){
         //si esta vacio redireccionar a login
         window.location.href = '/';
