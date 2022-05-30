@@ -6,6 +6,10 @@ class viewController {
         res.render('user/home')
     }
 
+    gethomeAdmin(req, res) {
+        res.render('admin/home')
+    }
+
     getcreateTeam(req, res) {
         res.render('team/create')
     }   
