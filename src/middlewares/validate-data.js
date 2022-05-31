@@ -11,4 +11,4 @@ const validateData = (req, res, next) => {
 
 module.exports = {
     validateData
-};
+}

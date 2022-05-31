@@ -6,7 +6,7 @@ class viewController {
         res.render('user/home')
     }
     getViewTeam(req, res) {
-       res.render('team/view')
+       res.render('team/panel')
     }
     getcreateTeam(req, res) {
         res.render('team/create')
