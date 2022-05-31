@@ -1,4 +1,3 @@
-
 {{> navbar}}
 <div class="columns is-centered mt-6 animate__animated animate__fadeInDown">
     <div class="column has-text-centered is-three-quarters">
@@ -16,22 +15,22 @@
     <div class="column has-text-centered is-three-quarters">
         <div class="columns">
             <div class="column is-one-quarter">
-                <a>
-                    <div class="card">
-                        <div class="card-content">
-                            <div class="media">
-                                <div class="media-content">
-                                    <p class="title is-4">
-                                        <a id="create">Opciones equipo</a>
-                                    </p>
-                                    <p class="subtitle is-6">
-                                        Aqui puedes ver la informaciond de tu equipo o bien crear un nuevo equipo
-                                    </p>
-                                </div>
+
+                <div class="card" id="panel_team">
+                    <div class="card-content">
+                        <div class="media">
+                            <div class="media-content">
+                                <p class="title is-4">
+                                    <a>Opciones equipo</a>
+                                </p>
+                                <p class="subtitle is-6">
+                                    Aqui puedes ver la informaciond de tu equipo o bien crear un nuevo equipo
+                                </p>
                             </div>
                         </div>
                     </div>
-                </a>
+                </div>
+
             </div>
             <div class="column is-one-quarter">
                 <div class="card">
@@ -56,7 +55,12 @@
 <script>
     const title_message = document.getElementById('title_message');
     const message_body = document.getElementById('message_body');
-    localStorage.setItem('token', '{{token}}');
+    const auth = localStorage.getItem('token');
+    if(auth == null){
+       localStorage.setItem('token', '{{token}}');
+    }
+
+
     const user = {
         name: '{{user.first_name}}' + ' {{user.last_name}}',
         email: '{{user.email}}',
@@ -66,9 +70,9 @@
     localStorage.setItem('user', JSON.stringify(user));
     title_message.innerHTML = 'Bienvenido ' + user.name;
     message_body.innerHTML = "Enhorabuena estas en el torneo de programacion organizado por la uiniversidad el bosque, a continuación podras encontrar las siguientes opciones:";
+    const panel_team = document.getElementById('panel_team');
+    panel_team.addEventListener('click', function () {
+        window.location.href = '/view/team';
+    });
 
-    const create = document.getElementById('create');
-    create.addEventListener('click', () => {
-        const url = 
-    })
 </script>
