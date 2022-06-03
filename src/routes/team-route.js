@@ -6,18 +6,16 @@ const { validateAuth } = require('../helpers/jwt');
 
 
 router.route('/getbyuser/:id')
-    .get(async (req, res) => {
-        teamController.getTeam(req, res);
-    })
-
-
-
+    .get([validateAuth],
+        async (req, res) => {
+            teamController.getTeam(req, res);
+        });
 router.route('/create')
     .post([
         validateAuth,
     ],
         async (req, res) => {
-        teamController.createTeam(req, res);
-    })
+            teamController.createTeam(req, res);
+        });
 
 module.exports = router;
