@@ -20,5 +20,7 @@ router.get('/team/create', (req, res) => {
     viewController.getcreateTeam(req, res)
 })
 
-
+router.get('/team/add_competitor', (req, res) => {
+    viewController.getAddCompetitor(req, res)
+})
 module.exports = router

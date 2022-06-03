@@ -35,7 +35,8 @@ class AuthController {
                             const token = await generateJSW(user, "admin");
                             return res.render('user/home', {
                                 user: user,
-                                token: token
+                                token: token,
+                                flag: 0
                             });
                         });
                     } else if (type === 2 || !type) {
@@ -45,7 +46,8 @@ class AuthController {
                             const token = await generateJSW(user, "competitor");
                             return res.render('user/home', {
                                 user: user,
-                                token: token
+                                token: token,
+                                flag: 0
                             });
                         });
                     }
@@ -83,6 +85,7 @@ class AuthController {
                         const us = user.dataValues
                         delete us.password
                         us.type = "admin"
+                        console.log(token)
                         return res.render('user/home', {
                             user: us,
                             token: token
@@ -92,13 +95,15 @@ class AuthController {
                         const us = user.dataValues
                         delete us.password
                         us.type = "competitor"
+                        console.log(token)
                         return res.render('user/home', {
                             user: us,
                             token: token
                         });
                     }
                 } else {
-                    return res.render('user/home', {
+                    console.log('contraseña incorrecta')
+                    return res.render('error', {
                         message: 'Contraseña incorrecta'
                     });
                 }

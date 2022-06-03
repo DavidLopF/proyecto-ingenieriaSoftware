@@ -28,7 +28,29 @@ class competitorController {
         } else {
             res.status(404).send({ message: 'No se encontro usuario' });
         }
+    }
 
+    async competitors_without_team(req, res) {
+        let competitors = await this.competitor.findAll({
+            where: {
+                team_id: null
+            },
+            include: [{
+                model: this.user,
+                attributes: ['id', "first_name", "last_name", 'email', 'age', 'dni']
+            }]
+        });
+        competitors = competitors.map(competitor => competitor.dataValues);
+        competitors = competitors.map(competitor => {
+            return {
+                id: competitor.id,
+                user: competitor.User.dataValues
+            }
+        })
+        res.json({
+            status: 'success',
+            competitors
+        });
     }
 
 }

@@ -103,6 +103,87 @@ class TeamController {
         }
     }
 
+    async addCompetitor(req, res) {
+        let capitan = req.user;
+        const competitor_id = req.body.competitor_id;
+        capitan = await this.competitor.findOne({
+            where: {
+                user_id: req.user.id
+            },
+            include: [{
+                model: this.team,
+                attributes: ['id', 'team_name']
+            }]
+        })
+        capitan = capitan.dataValues;
+        capitan.Team = capitan.Team.dataValues;
+        const isCapitan = await this.competitorIsCapitan(capitan);
+        const team_size = await this.validarCantidadIntegrantes(capitan.team_id);
+        if (isCapitan || team_size) {
+            let competitor = await this.competitor.findOne({
+                where: {
+                    id: competitor_id
+                }
+            })
+            competitor = competitor.dataValues;
+            if (competitor.team_id) {
+                res.status(500).json({
+                    message: 'el competidor ya tiene un equipo',
+                    competitor
+                });
+            } else {
+                await this.competitor.update({
+                    team_id: capitan.team_id
+                }, {
+                    where: {
+                        id: competitor_id
+                    }
+                }).then(async competitor => {
+                    res.status(200).json({
+                        message: `Competidor agregado al equipo ${capitan.Team.team_name}`,
+                    });
+                }).catch(err => {
+                    res.status(500).json({
+                        message: 'Competidor no agregado',
+                        err
+                    });
+                })
+            }
+
+        } else {
+            res.status(401).send('No tienes permiso de capitan para agregar un nuevo integrante al equipo   ');
+        }
+
+    }
+
+    async competitorIsCapitan(competitor) {
+        const capitan = await this.capitan.findOne({
+            where: {
+                competitor_id: competitor.id
+            }
+        })
+        if (capitan) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    async validarCantidadIntegrantes(team_id) {
+        let competitors = await this.competitor.findAll({
+            where: {
+                team_id: team_id
+            }
+        })
+        competitors = competitors.map(competitor => competitor.dataValues);
+        if (competitors.length < 4 && competitors.length >= 0) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
 }
 
-module.exports = TeamController;
+module.exports = new TeamController();
