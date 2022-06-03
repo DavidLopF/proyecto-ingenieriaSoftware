@@ -52,15 +52,13 @@
     </div>
 </div>
 
+
+{{#if token}}
+{{#if user}}
 <script>
     const title_message = document.getElementById('title_message');
     const message_body = document.getElementById('message_body');
-    const auth = localStorage.getItem('token');
-    if(auth == null){
-       localStorage.setItem('token', '{{token}}');
-    }
-
-
+    const token = localStorage.setItem('token', '{{token}}');
     const user = {
         name: '{{user.first_name}}' + ' {{user.last_name}}',
         email: '{{user.email}}',
@@ -70,9 +68,13 @@
     localStorage.setItem('user', JSON.stringify(user));
     title_message.innerHTML = 'Bienvenido ' + user.name;
     message_body.innerHTML = "Enhorabuena estas en el torneo de programacion organizado por la uiniversidad el bosque, a continuación podras encontrar las siguientes opciones:";
+</script>
+{{/if}}
+{{/if}}
+
+<script>
     const panel_team = document.getElementById('panel_team');
     panel_team.addEventListener('click', function () {
         window.location.href = '/view/team';
     });
-
 </script>

@@ -35,7 +35,8 @@ class AuthController {
                             const token = await generateJSW(user, "admin");
                             return res.render('user/home', {
                                 user: user,
-                                token: token
+                                token: token,
+                                flag: 0
                             });
                         });
                     } else if (type === 2 || !type) {
@@ -45,7 +46,8 @@ class AuthController {
                             const token = await generateJSW(user, "competitor");
                             return res.render('user/home', {
                                 user: user,
-                                token: token
+                                token: token,
+                                flag: 0
                             });
                         });
                     }
