@@ -11,6 +11,9 @@ class viewController {
     getcreateTeam(req, res) {
         res.render('team/create')
     }
+    getAddCompetitor(req, res) {
+        res.render('team/add_competitor')
+    }
 }
 
 

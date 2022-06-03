@@ -1,0 +1,61 @@
+{{> navbar}}
+
+
+<div class="columns is-centered ">
+    <div class="column is-two-thirds has-text-centered" id="column_competitor">
+        <div class="box animate__animated animate__fadeInRight">
+            <h1 class="title is-1">Competidores sin equipo</h1>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+{{> validateLogin}}
+<script>
+    //enviar peticion get para obtener la lista de los competidores que no tienen equipo    
+    const url_competitors = "/competitor/without_team";
+    const options_competitors = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+    };
+    fetch(url_competitors, options_competitors)
+        .then(res => res.json())
+        .then(result => {
+            let competitors = result.competitors;
+            console.log(competitors);
+            const column_competitor = document.getElementById('column_competitor');
+            competitors.forEach(competitor => {
+                column_competitor.innerHTML += `
+                <div class="card mt-5 animate__animated animate__fadeInRight">
+                    <div class="card-content">
+                        <div class="content">
+                            <p>
+                                <strong>Nombre:</strong> ${competitor.user.first_name} ${competitor.user.last_name}
+                            </p>
+                            <p>
+                                <strong>Correo:</strong> ${competitor.user.email}
+                            </p>
+                            <p>
+                                <strong>Cedula:</strong> ${competitor.user.dni}
+                            </p>
+                            <p>
+                                <strong>Age:</strong> ${competitor.user.age}
+                            </p>
+                        </div>   
+                    </div>
+                
+                <footer class="card-footer" id="agregar" name="${competitor.id}">
+                    <a  class="card-footer-item">Agregar al equipo</a>
+                </footer>`
+            })
+        })
+        .catch(error => console.log('error', error));
+</script>
