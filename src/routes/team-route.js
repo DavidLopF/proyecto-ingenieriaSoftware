@@ -4,7 +4,7 @@ const teamController = require('../controllers/team-controller');
 const { validateAuth } = require('../helpers/jwt');
 
 
-router.route('/getbyuser/:id')
+router.route('/getbyuser')
     .get([validateAuth],
         async (req, res) => {
             teamController.getTeam(req, res);
@@ -24,6 +24,7 @@ router.route('/add_competitor')
         async (req, res) => {
             teamController.addCompetitor(req, res);
         });
+
 
 
 module.exports = router;

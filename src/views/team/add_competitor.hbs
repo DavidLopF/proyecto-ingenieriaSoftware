@@ -4,16 +4,32 @@
 <div class="columns is-centered ">
     <div class="column is-two-thirds has-text-centered" id="column_competitor">
         <div class="box animate__animated animate__fadeInRight">
+            <div class=' equal-height has-text-centered '>
+
+                <figure><img src='https://sibcolombia.net/wp-content/uploads/2016/06/logo-ubosque.png' width="200"
+                        height="200"></figure>
+
+            </div>
+
             <h1 class="title is-1">Competidores sin equipo</h1>
+            <hr>
         </div>
     </div>
 </div>
 
-
-
-
-
-
+<div class="modal rounded" id="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card animate__animated animate__slideInUp">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Alerta !!</p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <p id="mensaje"></p>
+        </section>
+        <button class="modal-close is-large" id="close" aria-label="close"></button>
+    </div>
+</div>
 
 {{> validateLogin}}
 <script>
@@ -28,13 +44,12 @@
     };
     fetch(url_competitors, options_competitors)
         .then(res => res.json())
-        .then(result => {
+        .then(async result => {
             let competitors = result.competitors;
-            console.log(competitors);
             const column_competitor = document.getElementById('column_competitor');
             competitors.forEach(competitor => {
                 column_competitor.innerHTML += `
-                <div class="card mt-5 animate__animated animate__fadeInRight">
+                <div class="card mt-5 animate__animated animate__fadeInRight" id="${competitor.id}">
                     <div class="card-content">
                         <div class="content">
                             <p>
@@ -52,10 +67,58 @@
                         </div>   
                     </div>
                 
-                <footer class="card-footer" id="agregar" name="${competitor.id}">
-                    <a  class="card-footer-item">Agregar al equipo</a>
-                </footer>`
-            })
+                <footer class="card-footer" id="agregar_${competitor.id}">
+                    <a class="card-footer-item" >Agregar al equipo</a>
+                </footer>   
+               `
+            });
+
+            competitors = competitors.map(competitor => {
+                return "agregar_" + competitor.id;
+            });
+            for (let i = 0; i < competitors.length; i++) {
+                const button = document.getElementById(competitors[i]);
+                button.addEventListener('click', async () => {
+                    url = "/team/add_competitor";
+                    const options = {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({
+                            competitor_id: competitors[i].split("_")[1]
+                        })
+                    };
+
+                    fetch(url, options)
+                        .then(res => res.json())
+                        .then(async result => {
+                            if (result.ok) {
+                                const modal = document.getElementById('modal');
+                                modal.classList.add('is-active');
+                                const mensaje = document.getElementById('mensaje');
+                                mensaje.innerHTML = result.message;
+                                const close = document.getElementById('close');
+                                close.addEventListener('click', () => {
+                                    window.location.href = '/view/team';
+                                })
+                            } else {
+                                const modal = document.getElementById('modal');
+                                modal.classList.add('is-active');
+                                const mensaje = document.getElementById('mensaje');
+                                mensaje.innerHTML = result.message;
+                                const close = document.getElementById('close');
+                                close.addEventListener('click', () => {
+                                    window.location.href = '/view/team';
+                                })
+
+                            }
+                        }).catch(err => {
+                            console.log(err);
+                        });
+                });
+            }
         })
-        .catch(error => console.log('error', error));
+
 </script>
