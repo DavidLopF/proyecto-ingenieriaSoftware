@@ -33,7 +33,7 @@ class Server {
         this.app.use(express.json());
         this.app.use(express.urlencoded({ extended: true }));
         //poner para que se puedan ver los archivos en la carpeta public
-        this.app.use(express.static(path.join(__dirname, '../public')));
+        this.app.use('/public',express.static(path.join(__dirname, '../public')));
         this.app.set('views', path.join(__dirname, 'src/views'));
         this.app.engine('hbs', hbs.engine({
             extname: 'hbs',
