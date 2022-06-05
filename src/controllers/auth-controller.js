@@ -9,6 +9,7 @@ class AuthController {
         console.log(req.body)
         const { first_name, last_name, age, dni, email, type, password } = req.body;
         const salt = bcrypt.genSaltSync(10);
+        console.log('->' , Number(type));
         const pass = bcrypt.hashSync(password, salt);
         const userCreate = {
             first_name,
@@ -30,18 +31,18 @@ class AuthController {
                 }); 
             } else {
                 db.User.create(userCreate).then(user => {
-                    if (type === 1) {
+                    if (Number(type) === 1) {
                         db.Admin.create({
                             user_id: user.id
                         }).then(async admin => {
                             const token = await generateJSW(user, "admin");
-                            user.type = "admin"
-                            return res.render('user/home', {
-                                user: user,
-                                token: token,
+                            return res.render('admin/home', {
+                                user: user.dataValues,
+                                token: token
+
                             });
                         });
-                    } else if (type === 2 || !type) {
+                    } else if (Number(type) === 2 || !type) {
                         db.Competitor.create({
                             user_id: user.id,
                             languaje: req.body.lenguaje
@@ -89,7 +90,7 @@ class AuthController {
                         const us = user.dataValues
                         delete us.password
                         us.type = "admin"
-                        return res.render('user/home', {
+                        return res.render('admin/home', {
                             user: us,
                             token: token
                         });

@@ -31,8 +31,4 @@ router.post('/login', [
     auth.login(req, res);
 })
 
-
-
-
-
 module.exports = router;
