@@ -5,6 +5,7 @@ const auth = new Auth();
 const { validateData } = require('../middlewares/validate-data');
 const { check } = require('express-validator');
 const passport = require('passport');
+const { validateAuth } = require('../helpers/jwt');
 
 
 router.post('/register', [
@@ -30,5 +31,6 @@ router.post('/login', [
 ], (req, res) => {
     auth.login(req, res);
 })
+
 
 module.exports = router;

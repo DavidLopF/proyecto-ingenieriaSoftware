@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "npx jest --detectOpenHandles",
     "start": "nodemon index.js"
   },
   "author": "david lopez, esteban cardenas , cristian gonzales",
@@ -26,11 +27,17 @@
     "jsonwebtoken": "^8.5.1",
     "morgan": "^1.10.0",
     "mysql2": "^2.3.3",
+    "nodemailer": "^6.7.5",
+    "nodemailer-express-handlebars": "^5.0.0",
     "nodemon": "^2.0.16",
     "npm": "^8.12.1",
     "passport": "^0.5.2",
     "passport-local": "^1.0.0",
     "sequelize": "^6.19.0",
     "sequelize-cli": "^6.4.1"
+  },
+  "devDependencies": {
+    "jest": "^28.1.0",
+    "supertest": "^6.2.3"
   }
 }

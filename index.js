@@ -1,7 +1,4 @@
-require('dotenv').config();
 
-const Server = require('./src/controllers/server');
 
-const server = new Server();
-
+const server = require('./src/controllers/server');
 server.laucher();

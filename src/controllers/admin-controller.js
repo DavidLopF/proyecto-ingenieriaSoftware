@@ -30,6 +30,23 @@ class AdminController {
                     model: db.Captain
                 }]
             })
+    getTems(req, res) { 
+        db.Team.findAll()
+        .then(async function(teams) {
+            const competitors = await db.Competitor.findAll();
+            const captain = await db.Captain.findAll();
+            const user = await db.User.findAll();
+            console.log('pasa por aqui');
+            const teamsData = {
+                team : {
+                    team_id : '',
+                    team_name : '',
+                    captain_user_id : '',
+                    captain_name : '',
+                    competitor_user_id_1 : '',
+                    competitor_name_1 : '',
+                    competitor_user_id_2 : '',
+                    competitor_name_2 : '',
 
             //traer todos los competidores que tengan un it_team
             let competitor = await db.Competitor.findAll({
