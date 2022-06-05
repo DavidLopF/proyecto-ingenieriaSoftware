@@ -6,7 +6,6 @@
             <p class="panel-heading">
                 Optiones del equipo
             </p>
-
         </article>
     </div>
 </div>
@@ -31,7 +30,6 @@
             .then(res => res.json())
             .then(res => {
                 const haveTeam = res.haveTeam;
-                console.log(haveTeam);
                 if (!haveTeam) {
                     document.getElementById('options_team').innerHTML += `
                         <a class="panel-block is-active" href="/view/team/create">
@@ -43,11 +41,11 @@
 
                 } else {
                     document.getElementById('options_team').innerHTML += `
-                        <a class="panel-block is-active" href="/view/team/panel">
+                        <a class="panel-block is-active" href="/view/team/delete">
                                 <span class="panel-icon">
                             <i class="fas fa-book" aria-hidden="true"></i>
                             </span>
-                             Ver informacion mi equipo
+                            Eliminar integrantes del equipo
                         </a>
                         <a class="panel-block is-active" href="/view/team/add_competitor">
                                 <span class="panel-icon">
@@ -76,7 +74,6 @@
         .then(res => {
             if (res.ok) {
                 const competitors = res.competitors;
-                console.log(competitors);
                 const team = res.team;
                 const capitan = res.capitan;
                 const info_team = document.getElementById('info_team');
@@ -86,7 +83,7 @@
                         <div class="column is-half">
                             <div class=' equal-height has-text-centered '>
                                 <figure>
-                                    <img src='https://pbs.twimg.com/media/E3AzMdeX0AEwjQ_.jpg' width="200"
+                                    <img src='https://sibcolombia.net/wp-content/uploads/2016/06/logo-ubosque.png' width="200"
                                     height="200">
                                 </figure>
                             </div>
@@ -117,9 +114,9 @@
                                 </table>
                             </div>
                         </div>
-                        <div class="column is-half">
-                            <h3 class="subtitle is-3">Capitan del grupo</h3>
-                            <div class="table-container">
+                        <div class="column is-half has-text-centered">
+                            <h3 class="subtitle is-3">Capitan</h3>
+                            <div class="table-container" style="margin-left: 120px;">
                                 <table class="table">
                                     <thead>
                                         <th>
@@ -160,7 +157,10 @@
                     </td>
                 </tr>`;
             }
-
-
+            const capitan_id = res.capitan.User.id
+            let validation = JSON.parse(localStorage.getItem('user'))
+            if (capitan_id != validation.id) {
+                document.getElementById('options_team').innerHTML = '';
+            }
         }).catch(err => console.log(err));
 </script>

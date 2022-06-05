@@ -25,6 +25,11 @@ router.route('/add_competitor')
             teamController.addCompetitor(req, res);
         });
 
+router.post('/delete_competitor', [
+    validateAuth,
+    ], async (req, res) => {
+    teamController.deleteCompetitor(req, res);
+});
 
 
 module.exports = router;

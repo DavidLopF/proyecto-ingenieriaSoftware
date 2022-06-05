@@ -6,24 +6,8 @@
             <button class="delete" aria-label="close"></button>
         </header>
         <section class="modal-card-body">
-            {{#if message}}
-            <p>{{message}}</p>
-            {{else}}
-            <p>error inesperado</p>
-            {{/if}}
+            <p id="mensaje"></p>
         </section>
         <button class="modal-close is-large" id="close" aria-label="close"></button>
     </div>
 </div>
-
-<script>
-    const modal = document.getElementById('modal');
-    //activar el modal
-    function openModal() {
-        modal.classList.add('is-active');
-    }
-    const close = document.getElementById('close');
-    close.addEventListener('click', () => {
-        modal.classList.remove('is-active');
-    })
-</script>

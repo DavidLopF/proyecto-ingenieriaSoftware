@@ -49,7 +49,7 @@ class TeamController {
                         },
                     })
                     capitan = capitan.dataValues;
-                    capitan  = competitors.find(competitor => competitor.id === capitan.competitor_id);
+                    capitan = competitors.find(competitor => competitor.id === capitan.competitor_id);
                     competitors = competitors.filter(competitor => competitor.id !== capitan.id);
                     res.status(200).json({
                         message: 'Team',
@@ -226,6 +226,65 @@ class TeamController {
             return false;
         }
 
+    }
+
+    async deleteCompetitor(req, res) {
+        const user = req.user;
+        const competitor_id = req.body.competitor_id;
+        let competitor = await this.competitor.findOne({
+            where: {
+                user_id: user.id
+            }
+        })
+        if (competitor) {
+            competitor = competitor.dataValues;
+            const isCapitan = await this.competitorIsCapitan(competitor);
+            if (isCapitan) {
+                await this.competitor.update({
+                    team_id: null
+                }, {
+                    where: {
+                        id: competitor_id
+                    }
+                }).then(async competitor => {
+                    res.status(200).json({
+                        message: 'Competidor eliminado',
+                        ok: true
+                    });
+                }).catch(err => {
+                    res.status(500).json({
+                        message: 'Competidor no eliminado',
+                        err,
+                        ok: false
+                    });
+                })
+            } else {
+                res.status(500).json({
+                    message: 'No tienes permisos para eliminar un competidor',
+                    ok: false
+                });
+            }
+
+
+        } else {
+            res.status(500).json({
+                message: 'No tienes permisos',
+                ok: false
+            });
+        }
+
+    }
+    async competitorIsCapitan(competitor) {
+        let capitan = await this.capitan.findOne({
+            where: {
+                competitor_id: competitor.id
+            }
+        })
+        if (capitan) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }
