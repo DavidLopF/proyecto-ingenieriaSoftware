@@ -5,6 +5,7 @@ const hbs = require('express-handlebars');
 const path = require('path');
 const colors = require('colors');
 const db = require('../models/index');
+require('dotenv').config();
 
 
 
@@ -44,7 +45,6 @@ class Server {
 
 
     routes() {
-        this.app.use(this.userPath, require('../routes/user-route'));
         this.app.use(this.authPath, require('../routes/auth'));
         this.app.use(this.viewPath, require('../routes/view-route'));
         this.app.use(this.teamPath, require('../routes/team-route'));
@@ -77,4 +77,4 @@ class Server {
     }
 }
 
-module.exports = Server;
+module.exports = new Server();

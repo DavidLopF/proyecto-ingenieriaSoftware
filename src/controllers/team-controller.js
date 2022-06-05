@@ -97,7 +97,9 @@ class TeamController {
                         }
                     }).then(async capitan => {
                         if (capitan) {
-                            res.status(500).send('you are already in a team');
+                            res.status(200).json({
+                                message: 'Ya tienes un equipo',
+                            });
                         } else {
                             this.team.create({
                                 team_name: team_name
@@ -127,6 +129,8 @@ class TeamController {
                             })
                         }
                     })
+                } else {
+                    res.status(500).send('you are not a competitor');
                 }
             })
         } else {
@@ -215,14 +219,14 @@ class TeamController {
         </tr>
         <tr>
         <td style="width: 49.858%;">
-        <h1 style="text-align: center;">${userName}, has sidi agregado al equipo <em>"${teamName}"</em> </h1>
+        <h1 style="text-align: center;">${userName}, has sido agregado al equipo <em>"${teamName}"</em> </h1>
         </td>
         </tr>
         </tbody>
         </table>
         <table style="height: 128px; width: 50%; border-collapse: collapse; border-style: none; margin-left: auto; margin-right: auto;">
         <tbody>
-        <tr style="height: 73px;">
+        <tr style="height: 73px;"><h3 style="text-align: center;"><strong>Ahora perteneces aun equipo puedes entra a la pagina web para ver la informacion de tu equipo.</strong></h3>
         <td style="width: 100%; height: 73px;">
         <h3 style="text-align: center;"><strong>Ahora perteneces aun equipo puedes entra a la pagina web para ver la informacion de tu equipo.</strong></h3>
         </td>

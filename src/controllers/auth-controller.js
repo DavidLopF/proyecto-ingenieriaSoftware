@@ -7,10 +7,8 @@ const mail = require('../config/nodemialer');
 class AuthController {
 
     register(req, res) {
-        console.log(req.body)
         const { first_name, last_name, age, dni, email, type, password } = req.body;
         const salt = bcrypt.genSaltSync(10);
-        console.log('->', Number(type));
         const pass = bcrypt.hashSync(password, salt);
         const userCreate = {
             first_name,

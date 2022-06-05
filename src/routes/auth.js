@@ -33,10 +33,4 @@ router.post('/login', [
 })
 
 
-router.post('/send', [
-    validateAuth
-], async (req, res) => {
-    auth.sendEmail(req, res);
-})
-
 module.exports = router;
