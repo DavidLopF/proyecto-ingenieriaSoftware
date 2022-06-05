@@ -220,7 +220,7 @@ class TeamController {
         })
         competitors = competitors.map(competitor => competitor.dataValues);
         console.log(competitors.length);
-        if (competitors.length < 4) {
+        if (competitors.length < 3) {
             return true;
         } else {
             return false;
