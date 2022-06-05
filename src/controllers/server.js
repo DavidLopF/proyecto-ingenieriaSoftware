@@ -14,17 +14,13 @@ class Server {
         this.host = process.env.HOST || 'localhost';
         this.app = express();
         this.Server = require('http').Server(this.app);
-
         this.userPath = '/user';
         this.authPath = '/auth';
         this.viewPath = '/view';
         this.teamPath = '/team';
-        this.adminPath = '/admin';
         this.competitor = '/competitor';
         this.middlewares();
         this.routes();
-
-
     }
 
     middlewares() {
@@ -51,9 +47,7 @@ class Server {
         this.app.use(this.authPath, require('../routes/auth'));
         this.app.use(this.viewPath, require('../routes/view-route'));
         this.app.use(this.teamPath, require('../routes/team-route'));
-        this.app.use(this.adminPath, require('../routes/admin-route'));
         this.app.use(this.competitor, require('../routes/competitor-route'));
-
 
 
         this.app.get('/', (req, res) => {
