@@ -10,10 +10,13 @@
         </article>
     </div>
 </div>
+
+<section id="info_team">
+
+</section>
 <script>
     let user = localStorage.getItem('user');
     const token = localStorage.getItem('token');
-
     if (user && token) {
         user = JSON.parse(user);
         const url = `/competitor/haveTeam/${user.id}`;
@@ -55,10 +58,109 @@
                 }
 
             }).catch(err => console.log(err));
-
-
-
     } else {
         window.location.href = '/';
     }
+</script>
+<script>
+    const url_team = '/team/getbyuser';
+    const options_team = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+    };
+    fetch(url_team, options_team)
+        .then(res => res.json())
+        .then(res => {
+            if (res.ok) {
+                const competitors = res.competitors;
+                console.log(competitors);
+                const team = res.team;
+                const capitan = res.capitan;
+                const info_team = document.getElementById('info_team');
+                info_team.innerHTML += `
+                <div class="container mt-4 animate__animated animate__fadeInUpBig">
+                    <div class="columns box is-centered">
+                        <div class="column is-half">
+                            <div class=' equal-height has-text-centered '>
+                                <figure>
+                                    <img src='https://pbs.twimg.com/media/E3AzMdeX0AEwjQ_.jpg' width="200"
+                                    height="200">
+                                </figure>
+                            </div>
+                        </div>
+                        <div class="column is-two-thirds">
+                            <h1 class="title is-1" style="margin-top: 70px;">${team.team_name}</h1>
+                        </div>
+                        <hr>
+                    </div>
+                </div>
+                <div class="container mt-5 mb-6 animate__animated animate__fadeInUpBig">
+                    <div class="columns box is-centered">
+                        <div class="column is-half has-text-centered">
+                            <h3 class="subtitle is-3">Integrantes</h3>
+                            <div class="table-container" style="margin-left: 120px;">
+                                <table class="table">
+                                    <thead>
+                                        <th>
+                                            Nombre
+                                        </th>
+                                        <th>
+                                            lenguaje de programacion
+                                        </th>
+                                    </thead>
+                                    <tbody id="body_competitor">
+            
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="column is-half">
+                            <h3 class="subtitle is-3">Capitan del grupo</h3>
+                            <div class="table-container">
+                                <table class="table">
+                                    <thead>
+                                        <th>
+                                            Nombre
+                                        </th>
+                                        <th>
+                                            lenguaje de programacion
+                                        </th>
+                                    </thead>
+                                    <tbody id="body_capitan">
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `
+                const body_competitor = document.getElementById('body_competitor');
+                const body_capitan = document.getElementById('body_capitan');
+                competitors.forEach(competitor => {
+                    body_competitor.innerHTML += `
+                <tr>
+                    <td>
+                        ${competitor.User.first_name} ${competitor.User.last_name} 
+                    </td>
+                    <td>
+                        ${competitor.languaje}
+                    </td>
+                </tr>`});
+                body_capitan.innerHTML += `
+                <tr>
+                    <td>
+                        ${capitan.User.first_name} ${capitan.User.first_name} 
+                    </td>
+                    <td>
+                        ${capitan.languaje}
+                    </td>
+                </tr>`;
+            }
+
+
+        }).catch(err => console.log(err));
 </script>

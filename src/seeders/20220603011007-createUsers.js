@@ -21,10 +21,13 @@ module.exports = {
       });
     }
     await queryInterface.bulkInsert('Users', users, {});
+    //crear un arreglo con legunajes de programacion
+    let languages = ["java", "c", "c++"];
     users = await queryInterface.sequelize.query('SELECT * FROM Users', { type: queryInterface.sequelize.QueryTypes.SELECT });
     const competitors = users.map(user => {
       return {
         user_id: user.id,
+        languaje: languages[Math.floor(Math.random() * languages.length)],
         createdAt: new Date(),
         updatedAt: new Date()
       }
@@ -33,8 +36,11 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
+    await queryInterface.bulkDelete('Teams', null, {});
     await queryInterface.bulkDelete('Users', null, {});
+    await queryInterface.bulkDelete('Captains', null, {});
     await queryInterface.bulkDelete('Competitors', null, {});
+
 
   }
 };
