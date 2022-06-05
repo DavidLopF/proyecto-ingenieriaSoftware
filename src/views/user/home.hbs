@@ -1,4 +1,3 @@
-
 {{> navbar}}
 <div class="columns is-centered mt-6 animate__animated animate__fadeInDown">
     <div class="column has-text-centered is-three-quarters">
@@ -13,36 +12,18 @@
     </div>
 </div>
 <div class="columns is-centered mt-6 animate__animated animate__fadeInDown">
-    <div class="column has-text-centered is-three-quarters">
+    <div class="column has-text-centered is-four-fifths">
         <div class="columns">
-            <div class="column is-one-quarter">
-                <a>
-                    <div class="card">
-                        <div class="card-content">
-                            <div class="media">
-                                <div class="media-content">
-                                    <p class="title is-4">
-                                        <a href="/view/team/create"id="create">Opciones equipo</a>
-                                    </p>
-                                    <p class="subtitle is-6">
-                                        Aqui puedes ver la informaciond de tu equipo o bien crear un nuevo equipo
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="column is-one-quarter">
-                <div class="card">
+            <div class="column full">
+                <div class="card" id="panel_team">
                     <div class="card-content">
                         <div class="media">
                             <div class="media-content">
                                 <p class="title is-4">
-                                    <a href="/user/{{user.id}}/password">Alterar senha</a>
+                                    <a>Opciones equipo</a>
                                 </p>
                                 <p class="subtitle is-6">
-                                    Alterar senha do usuário
+                                    Aqui puedes ver la informaciond de tu equipo o bien crear un nuevo equipo
                                 </p>
                             </div>
                         </div>
@@ -53,10 +34,14 @@
     </div>
 </div>
 
+
+{{#if token}}
 <script>
+    console.log('entroooo');
+    console.log('{{user}}');
     const title_message = document.getElementById('title_message');
     const message_body = document.getElementById('message_body');
-    localStorage.setItem('token', '{{token}}');
+    const token = localStorage.setItem('token', '{{token}}');
     const user = {
         name: '{{user.first_name}}' + ' {{user.last_name}}',
         email: '{{user.email}}',
@@ -66,4 +51,20 @@
     localStorage.setItem('user', JSON.stringify(user));
     title_message.innerHTML = 'Bienvenido ' + user.name;
     message_body.innerHTML = "Enhorabuena estas en el torneo de programacion organizado por la uiniversidad el bosque, a continuación podras encontrar las siguientes opciones:";
+</script>
+{{else}}
+<script>
+    const title_message = document.getElementById('title_message');
+    const message_body = document.getElementById('message_body');
+    const user = JSON.parse(localStorage.getItem('user'));
+    title_message.innerHTML = 'Bienvenido' + user.name;
+    message_body.innerHTML = "Enhorabuena estas en el torneo de programacion organizado por la uiniversidad el bosque, a continuación podras encontrar las siguientes opciones:";
+</script>
+{{/if}}
+
+<script>
+    const panel_team = document.getElementById('panel_team');
+    panel_team.addEventListener('click', function () {
+        window.location.href = '/view/team';
+    });
 </script>

@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt');
 class AuthController {
 
     register(req, res) {
+        console.log(req.body)
         const { first_name, last_name, age, dni, email, type, password } = req.body;
         const salt = bcrypt.genSaltSync(10);
         console.log('->' , Number(type));
@@ -18,13 +19,14 @@ class AuthController {
             email,
             password: pass,
         }
+
         db.User.findOne({
             where: {
                 [db.Sequelize.Op.or]: [{ email }, { dni }]
             }
         }).then(user => {
             if (user) {
-                return res.render('user/home', {
+                return res.render('error', {
                     message: 'El usuario ya existe'
                 }); 
             } else {
@@ -37,16 +39,20 @@ class AuthController {
                             return res.render('admin/home', {
                                 user: user.dataValues,
                                 token: token
+
                             });
                         });
                     } else if (Number(type) === 2 || !type) {
                         db.Competitor.create({
-                            user_id: user.id
+                            user_id: user.id,
+                            languaje: req.body.lenguaje
                         }).then(async competitor => {
+                            user =  user.dataValues
                             const token = await generateJSW(user, "competitor");
+                            user.type = "competitor"
                             return res.render('user/home', {
-                                user: user.dataValues,
-                                token: token
+                                user: user,
+                                token: token,
                             });
                         });
                     }
@@ -63,7 +69,7 @@ class AuthController {
             }
         }).then(async user => {
             if (!user) {
-                return res.render('user/home', {
+                return res.render('error', {
                     message: 'No se ha encontrado el usuario'
                 });
             } else {
@@ -99,7 +105,8 @@ class AuthController {
                         });
                     }
                 } else {
-                    return res.render('user/home', {
+                    console.log('contraseña incorrecta')
+                    return res.render('error', {
                         message: 'Contraseña incorrecta'
                     });
                 }

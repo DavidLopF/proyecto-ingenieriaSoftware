@@ -9,11 +9,19 @@ class viewController {
     gethomeAdmin(req, res) {
         res.render('admin/home')
     }
-
+    getViewTeam(req, res) {
+       res.render('team/panel')
+    }
     getcreateTeam(req, res) {
         res.render('team/create')
-    }   
+    }
+    getAddCompetitor(req, res) {
+        res.render('team/add_competitor')
+    }
+    getDeleteTeam(req, res) {
+        res.render('team/delete_competitor')
+    }
 }
 
 
-module.exports = viewController
+module.exports = new viewController()

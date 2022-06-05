@@ -41,9 +41,7 @@
             <button class="delete" aria-label="close"></button>
         </header>
         <section class="modal-card-body">
-
             <p id="mensaje"></p>
-
         </section>
         <button class="modal-close is-large" id="close" aria-label="close"></button>
     </div>
@@ -53,9 +51,7 @@
     const user = localStorage.getItem('user');
     const tok = localStorage.getItem('token');
     const crear = document.getElementById('crear');
-
     crear.addEventListener('click', () => {
-        //hacer peticion post a /team/create y enviando el token como header
         const team_name = document.querySelector('input[name=team_name]').value;
         const url = '/team/create';
         const data = {
@@ -70,29 +66,19 @@
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${tok}`
             }
-        })
-            .then(res => res.json())
+        }).then(res => res.json())
             .then(response => {
-                if (response.status == 'success') {
-                    const modal = document.getElementById('modal');
-                    modal.classList.add('is-active');
-                    const close = document.getElementById('close');
-                    close.addEventListener('click', () => {
-                        modal.classList.remove('is-active');
-                    })
-                } else {
-                    console.log(response);
-                }
+                const modal = document.getElementById('modal');
+                modal.classList.add('is-active');
+                const mensaje = document.getElementById('mensaje');
+                mensaje.innerHTML = "Equipo creado correctamente";
+                const close = document.getElementById('close');
+                close.addEventListener('click', () => {
+                    modal.classList.remove('is-active');
+                    window.location.href = '/view/team';
+                })
             })
-            .catch(error => {
-                console.log(error);
-
-
-
-            });
-
     })
-
 </script>
 
 {{> validateLogin}}

@@ -1,5 +1,6 @@
 const db = require('../models');
 const ValidateDB = require('../helpers/validate-db');
+const colors = require('colors');
 
 
 class TeamController {
@@ -12,41 +13,70 @@ class TeamController {
     }
 
     async getTeam(req, res) {
-        const { id } = req.params;
-        await this.validateDB.validateuserByID(id).then(user => {
-            if (!user) {
-                res.status(404).send('user not found');
+        try {
+            const user = req.user;
+            let competitor = await this.competitor.findOne({
+                where: {
+                    user_id: user.id
+                },
+                include: [{
+                    model: this.team,
+                    attributes: ['id', 'team_name']
+                }]
+            })
+            console.log(colors.yellow(competitor));
+            if (competitor) {
+                competitor = competitor.dataValues;
+                competitor.Team = competitor.Team.dataValues;
+                if (competitor.Team) {
+                    let competitors = await this.competitor.findAll({
+                        where: {
+                            team_id: competitor.team_id
+                        },
+                        include: [{
+                            model: this.user,
+                            attributes: ['id', 'first_name', 'last_name', 'email', 'dni', 'age']
+                        }]
+                    })
+                    competitors = competitors.map(competitor => competitor.dataValues);
+                    competitors = competitors.map(competitor => {
+                        competitor.User = competitor.User.dataValues;
+                        return competitor;
+                    })
+                    let capitan = await this.capitan.findOne({
+                        where: {
+                            team_id: competitor.team_id
+                        },
+                    })
+                    capitan = capitan.dataValues;
+                    capitan = competitors.find(competitor => competitor.id === capitan.competitor_id);
+                    competitors = competitors.filter(competitor => competitor.id !== capitan.id);
+                    res.status(200).json({
+                        message: 'Team',
+                        team: competitor.Team,
+                        competitors: competitors,
+                        capitan: capitan,
+                        ok: true
+                    });
+                } else {
+                    res.status(500).json({
+                        message: 'Error',
+                        ok: false
+                    });
+                }
             } else {
-                this.competitor.findOne({
-                    where: {
-                        user_id: id
-                    },
-                }).then(competitor => {
-                    const team = competitor.team_id;
-
-                    if (!team) {
-                        res.status(404).json({
-                            message: 'team not found',
-                            team: null
-                        });
-                    } else {
-                        this.team.findOne({
-                            where: {
-                                id: team
-                            }
-                        }).then(team => {
-                            res.status(200).json({
-                                message: 'team found',
-                                team
-                            });
-                        })
-                    }
-                }).catch(err => {
-                    res.status(500).send(err);
-                })
+                res.status(200).json({
+                    message: 'Aun no tienes equipo, no puedes ver datos del mismo',
+                    ok: false
+                });
             }
-        })
-
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({
+                message: 'Error',
+                ok: false
+            });
+        }
     }
 
     async createTeam(req, res) {
@@ -103,6 +133,160 @@ class TeamController {
         }
     }
 
+    async addCompetitor(req, res) {
+        let capitan = req.user;
+        const competitor_id = req.body.competitor_id;
+        capitan = await this.competitor.findOne({
+            where: {
+                user_id: req.user.id
+            },
+            include: [{
+                model: this.team,
+                attributes: ['id', 'team_name']
+            }]
+        })
+        capitan = capitan.dataValues;
+        capitan.Team = capitan.Team.dataValues;
+        const isCapitan = await this.competitorIsCapitan(capitan);
+        const team_size = await this.validarCantidadIntegrantes(capitan.team_id);
+        console.log(team_size);
+        if (isCapitan && team_size) {
+            let competitor = await this.competitor.findOne({
+                where: {
+                    id: competitor_id
+                }
+            })
+            competitor = competitor.dataValues;
+            if (competitor.team_id) {
+                res.status(500).json({
+                    message: 'el competidor ya tiene un equipo',
+                    competitor
+                });
+            } else {
+                await this.competitor.update({
+                    team_id: capitan.team_id
+                }, {
+                    where: {
+                        id: competitor_id
+                    }
+                }).then(async competitor => {
+                    res.status(200).json({
+                        message: `Competidor agregado al equipo ${capitan.Team.team_name}`,
+                        ok: true
+                    });
+                }).catch(err => {
+                    res.status(500).json({
+                        message: 'Competidor no agregado',
+                        err,
+                        ok: false
+                    });
+                })
+            }
+
+        } else {
+            if (!capitan) {
+                res.status(500).json({
+                    message: 'No tienes permisos para agregar un competidor',
+                    ok: false
+                });
+            } else if (!team_size) {
+                res.status(500).json({
+                    message: 'El equipo ya tiene 4 integrantes',
+                    ok: false
+                });
+            }
+        }
+
+    }
+
+    async competitorIsCapitan(competitor) {
+        const capitan = await this.capitan.findOne({
+            where: {
+                competitor_id: competitor.id
+            }
+        })
+        if (capitan) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    async validarCantidadIntegrantes(team_id) {
+        let competitors = await this.competitor.findAll({
+            where: {
+                team_id: team_id
+            }
+        })
+        competitors = competitors.map(competitor => competitor.dataValues);
+        console.log(competitors.length);
+        if (competitors.length < 4) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
+    async deleteCompetitor(req, res) {
+        const user = req.user;
+        const competitor_id = req.body.competitor_id;
+        let competitor = await this.competitor.findOne({
+            where: {
+                user_id: user.id
+            }
+        })
+        if (competitor) {
+            competitor = competitor.dataValues;
+            const isCapitan = await this.competitorIsCapitan(competitor);
+            if (isCapitan) {
+                await this.competitor.update({
+                    team_id: null
+                }, {
+                    where: {
+                        id: competitor_id
+                    }
+                }).then(async competitor => {
+                    res.status(200).json({
+                        message: 'Competidor eliminado',
+                        ok: true
+                    });
+                }).catch(err => {
+                    res.status(500).json({
+                        message: 'Competidor no eliminado',
+                        err,
+                        ok: false
+                    });
+                })
+            } else {
+                res.status(500).json({
+                    message: 'No tienes permisos para eliminar un competidor',
+                    ok: false
+                });
+            }
+
+
+        } else {
+            res.status(500).json({
+                message: 'No tienes permisos',
+                ok: false
+            });
+        }
+
+    }
+    async competitorIsCapitan(competitor) {
+        let capitan = await this.capitan.findOne({
+            where: {
+                competitor_id: competitor.id
+            }
+        })
+        if (capitan) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }
 
-module.exports = TeamController;
+module.exports = new TeamController();

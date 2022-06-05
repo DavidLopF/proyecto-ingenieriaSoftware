@@ -30,7 +30,8 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Competitor.init({
-    user_id: DataTypes.INTEGER
+    user_id: DataTypes.INTEGER,
+    languaje: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Competitor',
