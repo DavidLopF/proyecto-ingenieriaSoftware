@@ -1,6 +1,6 @@
 const { Router } = require('express')
 const router = Router()
-const { validateAuth} = require('../helpers/jwt')
+const { validateAuth } = require('../helpers/jwt')
 const viewController = require('../controllers/view-controller')
 
 
@@ -18,8 +18,9 @@ router.get('/home', (req, res) => {
 
 router.get('/home2', (req, res) => {
     viewController.gethomeAdmin(req, res)
+})
 
-router.get("/team" , (req, res) => {
+router.get("/team", (req, res) => {
     viewController.getViewTeam(req, res)
 
 })
@@ -35,4 +36,7 @@ router.get('/team/add_competitor', (req, res) => {
 router.get('/team/delete', (req, res) => {
     viewController.getDeleteTeam(req, res)
 })
+
+
 module.exports = router
+
