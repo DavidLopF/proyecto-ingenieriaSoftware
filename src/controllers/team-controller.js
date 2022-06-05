@@ -1,6 +1,8 @@
 const db = require('../models');
 const ValidateDB = require('../helpers/validate-db');
 const colors = require('colors');
+const mail = require('../config/nodemialer');
+
 
 
 class TeamController {
@@ -24,7 +26,6 @@ class TeamController {
                     attributes: ['id', 'team_name']
                 }]
             })
-            console.log(colors.yellow(competitor));
             if (competitor) {
                 competitor = competitor.dataValues;
                 competitor.Team = competitor.Team.dataValues;
@@ -149,14 +150,18 @@ class TeamController {
         capitan.Team = capitan.Team.dataValues;
         const isCapitan = await this.competitorIsCapitan(capitan);
         const team_size = await this.validarCantidadIntegrantes(capitan.team_id);
-        console.log(team_size);
         if (isCapitan && team_size) {
             let competitor = await this.competitor.findOne({
                 where: {
                     id: competitor_id
-                }
+                },
+                include: [{
+                    model: this.user,
+                    attributes: ['id', 'first_name', 'last_name', 'email', 'dni', 'age']
+                }]
             })
             competitor = competitor.dataValues;
+            competitor.User = competitor.User.dataValues;
             if (competitor.team_id) {
                 res.status(500).json({
                     message: 'el competidor ya tiene un equipo',
@@ -169,12 +174,14 @@ class TeamController {
                     where: {
                         id: competitor_id
                     }
-                }).then(async competitor => {
+                }).then(async comp => {
+                    await this.sendEmail(competitor.User.email, this.createHtml(competitor.User.first_name + ' ' + competitor.User.last_name, capitan.Team.team_name));
                     res.status(200).json({
                         message: `Competidor agregado al equipo ${capitan.Team.team_name}`,
                         ok: true
                     });
                 }).catch(err => {
+                    console.log(err);
                     res.status(500).json({
                         message: 'Competidor no agregado',
                         err,
@@ -191,12 +198,50 @@ class TeamController {
                 });
             } else if (!team_size) {
                 res.status(500).json({
-                    message: 'El equipo ya tiene 4 integrantes',
+                    message: 'El equipo ya tiene 3 integrantes',
                     ok: false
                 });
             }
         }
 
+    }
+
+    createHtml(userName, teamName) {
+        return `
+        <table style="width: 50%; border-collapse: collapse; border-style: hidden; margin-left: auto; margin-right: auto;" border="1">
+        <tbody>
+        <tr>
+        <td style="width: 49.858%;"><strong><img style="display: block; margin-left: auto; margin-right: auto;" src="https://sibcolombia.net/wp-content/uploads/2016/06/logo-ubosque.png" alt="" width="200" height="200" /></strong></td>
+        </tr>
+        <tr>
+        <td style="width: 49.858%;">
+        <h1 style="text-align: center;">${userName}, has sidi agregado al equipo <em>"${teamName}"</em> </h1>
+        </td>
+        </tr>
+        </tbody>
+        </table>
+        <table style="height: 128px; width: 50%; border-collapse: collapse; border-style: none; margin-left: auto; margin-right: auto;">
+        <tbody>
+        <tr style="height: 73px;">
+        <td style="width: 100%; height: 73px;">
+        <h3 style="text-align: center;"><strong>Ahora perteneces aun equipo puedes entra a la pagina web para ver la informacion de tu equipo.</strong></h3>
+        </td>
+        </tr>
+        <tr style="height: 55px;">
+        <td style="width: 100%; height: 55px;"><hr /></td>
+        </tr>
+        </tbody>
+        </table>
+        `
+
+    }
+
+    async sendEmail(email, html_body) {
+        const mail_options = {
+            subject: '¡¡¡¡ Bienvenido a tu equipo !!!!!',
+            html: html_body
+        }
+        const mailer = await mail.sendMail(email, mail_options);
     }
 
     async competitorIsCapitan(competitor) {
@@ -219,7 +264,6 @@ class TeamController {
             }
         })
         competitors = competitors.map(competitor => competitor.dataValues);
-        console.log(competitors.length);
         if (competitors.length < 3) {
             return true;
         } else {

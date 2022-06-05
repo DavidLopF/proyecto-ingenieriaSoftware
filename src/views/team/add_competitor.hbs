@@ -1,6 +1,5 @@
 {{> navbar}}
 
-
 <div class="columns is-centered ">
     <div class="column is-two-thirds has-text-centered" id="column_competitor">
         <div class="box animate__animated animate__fadeInRight">
@@ -32,7 +31,6 @@
 
 {{> validateLogin}}
 <script>
-    //enviar peticion get para obtener la lista de los competidores que no tienen equipo    
     const url_competitors = "/competitor/without_team";
     const options_competitors = {
         method: 'GET',

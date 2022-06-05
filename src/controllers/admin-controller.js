@@ -5,14 +5,12 @@ const bcrypt = require('bcrypt');
 class AdminController {
 
     getTems(req, res) { 
-       //get all the competitors from the database with the table team in data base
         db.Team.findAll()
         .then(async function(teams) {
             const competitors = await db.Competitor.findAll();
             const captain = await db.Captain.findAll();
             const user = await db.User.findAll();
             console.log('pasa por aqui');
-            //create an array of objects with the data of the teams
             const teamsData = {
                 team : {
                     team_id : '',
