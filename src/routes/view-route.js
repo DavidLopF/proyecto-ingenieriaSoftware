@@ -18,6 +18,7 @@ router.get('/home', (req, res) => {
 
 router.get('/home2', (req, res) => {
     viewController.gethomeAdmin(req, res)
+})
 
 router.get("/team" , (req, res) => {
     viewController.getViewTeam(req, res)
