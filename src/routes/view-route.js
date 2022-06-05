@@ -1,8 +1,8 @@
 const { Router } = require('express')
 const router = Router()
 const { validateAuth} = require('../helpers/jwt')
-const ViewController = require('../controllers/view-controller')
-const viewController = new ViewController();
+const viewController = require('../controllers/view-controller')
+
 
 router.get('/register', (req, res) => {
     res.render('auth/register')
@@ -24,7 +24,7 @@ router.get('/team/add_competitor', (req, res) => {
     viewController.getAddCompetitor(req, res)
 })
 
-router.get('/team/get', (req, res) => {
-    
+router.get('/team/delete', (req, res) => {
+    viewController.getDeleteTeam(req, res)
 })
 module.exports = router

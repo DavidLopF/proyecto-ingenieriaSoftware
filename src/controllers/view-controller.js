@@ -14,7 +14,10 @@ class viewController {
     getAddCompetitor(req, res) {
         res.render('team/add_competitor')
     }
+    getDeleteTeam(req, res) {
+        res.render('team/delete_competitor')
+    }
 }
 
 
-module.exports = viewController
+module.exports = new viewController()

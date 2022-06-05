@@ -1,0 +1,103 @@
+{{> navbar}}
+
+<div class="columns is-centered ">
+    <div class="column is-two-thirds has-text-centered" id="column_competitor">
+        <div class="box animate__animated animate__fadeInRight">
+            <div class=' equal-height has-text-centered '>
+
+                <figure><img src='https://sibcolombia.net/wp-content/uploads/2016/06/logo-ubosque.png' width="200"
+                        height="200"></figure>
+
+            </div>
+
+            <h1 class="title is-1">Lista de integrantes</h1>
+            <hr>
+        </div>
+    </div>
+</div>
+
+{{> modal}}
+
+{{> validateLogin}}
+<script>
+    const url_competitors = "/team/getbyuser";
+    const options_competitors = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+    };
+    fetch(url_competitors, options_competitors)
+        .then(res => res.json())
+        .then(res => {
+            let competitors = res.competitors;
+            const column_competitor = document.getElementById('column_competitor');
+            competitors.forEach(competitor => {
+                column_competitor.innerHTML += `
+                <div class="card mt-5 animate__animated animate__fadeInRight" id="${competitor.id}">
+                    <div class="card-content">
+                        <div class="content">
+                            <p>
+                                <strong>Nombre:</strong> ${competitor.User.first_name} ${competitor.User.last_name}
+                            </p>
+                            <p>
+                                <strong>Correo:</strong> ${competitor.User.email}
+                            </p>
+                            <p>
+                                <strong>Cedula:</strong> ${competitor.User.dni}
+                            </p>
+                            <p>
+                                <strong>Age:</strong> ${competitor.User.age}
+                            </p>
+                        </div>   
+                    </div>
+                
+                <footer class="card-footer" id="eliminar_${competitor.id}">
+                    <a class="card-footer-item" >Eliminar del equipo</a>
+                </footer>   
+               `
+            });
+
+            competitors = competitors.map(competitor => {
+                return "eliminar_" + competitor.id;
+            });
+            for (let i = 0; i < competitors.length; i++) {
+                const button = document.getElementById(competitors[i]);
+                button.addEventListener('click', async () => {
+                    url = "/team/delete_competitor";
+                    const options = {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({
+                            competitor_id: competitors[i].split("_")[1]
+                        })
+                    };
+
+                    fetch(url, options)
+                        .then(res => res.json())
+                        .then(res => {
+                            const modal = document.getElementById('modal');
+                            modal.classList.add('is-active');
+                            const mensaje = document.getElementById('mensaje');
+                            mensaje.innerHTML = res.message;
+                            const close = document.getElementById('close');
+                            close.addEventListener('click', () => {
+                                window.location.href = '/view/team';
+                            });
+                        }).catch(err => {
+                            console.log(err);
+                            alert("Error al eliminar");
+                        });
+                })
+            }
+        }).catch(err => {
+            console.log(err);
+        });
+
+
+
+</script>
