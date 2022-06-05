@@ -7,5 +7,8 @@ router.get('/teams', (req, res) => {
     admin.getTems(req, res);
 })
 
+router.delete('/deleteTeam', (req, res) => {
+    admin.deleteTeam(req, res);
+});
 
 module.exports = router

@@ -1,71 +1,118 @@
 const db = require('../models');
-const { generateJSW } = require('../helpers/jwt');
-const bcrypt = require('bcrypt');
-
+const ValidateDB = require('../helpers/validate-db');
 class AdminController {
+    constructor() {
+        this.user = db.User;
+        this.competitor = db.Competitor;
+        this.capitan = db.Captain;
+        this.team = db.Team;
+        this.validateDB = new ValidateDB();
+    }
 
-    getTems(req, res) { 
-       //get all the competitors from the database with the table team in data base
-        db.Team.findAll()
-        .then(async function(teams) {
-            const competitors = await db.Competitor.findAll();
-            const captain = await db.Captain.findAll();
-            const user = await db.User.findAll();
-            console.log('pasa por aqui');
-            //create an array of objects with the data of the teams
-            const teamsData = {
-                team : {
-                    team_id : '',
-                    team_name : '',
-                    captain_user_id : '',
-                    captain_name : '',
-                    competitor_user_id_1 : '',
-                    competitor_name_1 : '',
-                    competitor_user_id_2 : '',
-                    competitor_name_2 : '',
-                }
-                };
-                console.log('pasa por aqui');
-                for(let tema of teams) {
-                    console.log('entra');
-                    let data = [] ;
-                    let TEAM = tema.dataValues
-                    data.push(TEAM);
-                    for(let cap of captain) {
-                       
-                        if(tema.id == cap.team_id) {
-                            let CAPTAIN = cap.dataValues;
-                           data.push(CAPTAIN);
-                        }
-                    }
-                    for(let comp of competitors) {
-                        
-                        if(tema.id == comp.team_id) {
-                            let COMPETITOR = comp.dataValues;
-                           data.push(COMPETITOR);
-                        }
-                    }
-                    console.log('aqui---->',data);
-                }
-
-            //return the array of objects with the data of the teams
-            res.status(200).json({
-                message: 'Teams',
-                teams,
-                competitors,
-                captain,
-                user,
-            });
+    async getTems(req, res) { 
+        //traer los equipos incluyendo los competidores y sus capitanes que pertenecen a ese equipo 
+        let team = await db.Team.findAll({
+            include: [{
+                model: db.Captain
+            }]
         })
 
-        .catch(function(err) {
-            res.send(err);
+        //traer todos los competidores que tengan un it_team
+        let competitor = await db.Competitor.findAll({
+            include: [{
+                model: db.User
+            }]
+        })
+
+        let data = [{
+            team_name : '', 
+            team_id : 0,
+            data : [{
+                name : '',
+                last_name : '',
+                rol : '',
+                competitor_id : 0,
+                user_id : 0
+            }]
+         }];
+
+        for (let te of team) {
+            let data_team = {
+                team_name : te.team_name, 
+                team_id : te.id,
+                data : []
+            }
+            for (let co of competitor) {
+                let rol = 'Competidor';
+                if(co.team_id == te.id){
+                    if(te.Captain.competitor_id == co.id){
+                        rol = 'Capitan';
+                    }
+                    let data_competitor = {
+                        name : co.User.first_name,
+                        last_name : co.User.last_name,
+                        rol : rol,
+                        competitor_id : co.id,
+                        user_id : co.User.id
+                    }
+                    data_team.data.push(data_competitor);
+                }
+            }
+            data.push(data_team);
+        }
+
+        //eliminar el primer elemento del array que es un objeto vacio
+        data.shift();
+
+        res.status(200).json({
+            ok : true,
+            message : 'Teams',
+            Teams : data
         });
+        
     }
 
     getCSV(req, res) { }
 
-    deleteTeam(req, res) { }
+    async deleteTeam(req, res) {
+        const team_id = req.body.team_id;
+        const team = await db.Team.findByPk(team_id);
+        const cap = await db.Captain.findOne({
+            where : {
+                team_id : team_id
+            }
+        });
+
+        const competitor = await db.Competitor.findAll({
+            where : {
+                team_id : team_id
+            }
+        });
+        //traer todos los usuarios de los competidores
+        let users = [];
+        for (let co of competitor) {
+            let user = await db.User.findByPk(co.user_id);
+            users.push(user);
+        }
+
+        //eliminar el capitán del equipo
+        await cap.destroy();
+        //eliminar los competidores del equipo
+        for (let co of competitor) {
+            await co.destroy();
+        }
+        //eliminar los usuarios de los competidores
+        for (let u of users) {
+            await u.destroy();
+        }
+        //eliminar el equipo
+        await team.destroy();
+
+        res.status(200).json({
+            ok : true,
+            message : 'Team deleted'
+        });
+    }
 
 }
 
