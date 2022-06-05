@@ -41,9 +41,7 @@
             <button class="delete" aria-label="close"></button>
         </header>
         <section class="modal-card-body">
-
             <p id="mensaje"></p>
-
         </section>
         <button class="modal-close is-large" id="close" aria-label="close"></button>
     </div>
@@ -72,9 +70,12 @@
             .then(response => {
                 const modal = document.getElementById('modal');
                 modal.classList.add('is-active');
+                const mensaje = document.getElementById('mensaje');
+                mensaje.innerHTML = "Equipo creado correctamente";
                 const close = document.getElementById('close');
                 close.addEventListener('click', () => {
                     modal.classList.remove('is-active');
+                    window.location.href = '/view/team';
                 })
             })
     })
