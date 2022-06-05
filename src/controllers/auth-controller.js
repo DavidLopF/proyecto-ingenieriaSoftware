@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt');
 class AuthController {
 
     register(req, res) {
+        console.log(req.body)
         const { first_name, last_name, age, dni, email, type, password } = req.body;
         const salt = bcrypt.genSaltSync(10);
         const pass = bcrypt.hashSync(password, salt);
@@ -17,13 +18,14 @@ class AuthController {
             email,
             password: pass,
         }
+
         db.User.findOne({
             where: {
                 [db.Sequelize.Op.or]: [{ email }, { dni }]
             }
         }).then(user => {
             if (user) {
-                return res.render('user/home', {
+                return res.render('error', {
                     message: 'El usuario ya existe'
                 }); 
             } else {
@@ -33,21 +35,23 @@ class AuthController {
                             user_id: user.id
                         }).then(async admin => {
                             const token = await generateJSW(user, "admin");
+                            user.type = "admin"
                             return res.render('user/home', {
                                 user: user,
                                 token: token,
-                                flag: 0
                             });
                         });
                     } else if (type === 2 || !type) {
                         db.Competitor.create({
-                            user_id: user.id
+                            user_id: user.id,
+                            languaje: req.body.lenguaje
                         }).then(async competitor => {
+                            user =  user.dataValues
                             const token = await generateJSW(user, "competitor");
+                            user.type = "competitor"
                             return res.render('user/home', {
                                 user: user,
                                 token: token,
-                                flag: 0
                             });
                         });
                     }
@@ -64,7 +68,7 @@ class AuthController {
             }
         }).then(async user => {
             if (!user) {
-                return res.render('user/home', {
+                return res.render('error', {
                     message: 'No se ha encontrado el usuario'
                 });
             } else {
@@ -85,7 +89,6 @@ class AuthController {
                         const us = user.dataValues
                         delete us.password
                         us.type = "admin"
-                        console.log(token)
                         return res.render('user/home', {
                             user: us,
                             token: token
@@ -95,7 +98,6 @@ class AuthController {
                         const us = user.dataValues
                         delete us.password
                         us.type = "competitor"
-                        console.log(token)
                         return res.render('user/home', {
                             user: us,
                             token: token

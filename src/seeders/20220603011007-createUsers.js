@@ -21,8 +21,7 @@ module.exports = {
       });
     }
     await queryInterface.bulkInsert('Users', users, {});
-    //crear un arreglo con legunajes de programacion
-    let languages = ["java", "c", "c++"];
+    let languages = ["Java", "J", "C++"];
     users = await queryInterface.sequelize.query('SELECT * FROM Users', { type: queryInterface.sequelize.QueryTypes.SELECT });
     const competitors = users.map(user => {
       return {
