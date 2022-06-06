@@ -23,10 +23,12 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Team.init({
-    team_name: DataTypes.STRING
+    team_name: DataTypes.STRING,
+    clave_team: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'Team',
+
   });
   return Team;
 };

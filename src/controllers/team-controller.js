@@ -2,6 +2,7 @@ const db = require('../models');
 const ValidateDB = require('../helpers/validate-db');
 const colors = require('colors');
 const mail = require('../config/nodemialer');
+const generator = require('generate-password');
 
 
 
@@ -23,7 +24,7 @@ class TeamController {
                 },
                 include: [{
                     model: this.team,
-                    attributes: ['id', 'team_name']
+                    attributes: ['id', 'team_name', 'clave_team']
                 }]
             })
             if (competitor) {
@@ -52,6 +53,7 @@ class TeamController {
                     capitan = capitan.dataValues;
                     capitan = competitors.find(competitor => competitor.id === capitan.competitor_id);
                     competitors = competitors.filter(competitor => competitor.id !== capitan.id);
+                    console.log(competitor.Team);
                     res.status(200).json({
                         message: 'Team',
                         team: competitor.Team,
@@ -101,8 +103,13 @@ class TeamController {
                                 message: 'Ya tienes un equipo',
                             });
                         } else {
+                            const team_key = generator.generate({
+                                length: 6,
+                                numbers: true
+                            });
                             this.team.create({
-                                team_name: team_name
+                                team_name: team_name,
+                                clave_team: team_key
                             }).then(async team => {
                                 await this.capitan.create({
                                     team_id: team.id,
@@ -147,7 +154,7 @@ class TeamController {
             },
             include: [{
                 model: this.team,
-                attributes: ['id', 'team_name']
+                attributes: ['id', 'team_name', 'clave_team']
             }]
         })
         capitan = capitan.dataValues;
@@ -179,7 +186,7 @@ class TeamController {
                         id: competitor_id
                     }
                 }).then(async comp => {
-                    await this.sendEmail(competitor.User.email, this.createHtml(competitor.User.first_name + ' ' + competitor.User.last_name, capitan.Team.team_name));
+                    await this.sendEmail(competitor.User.email, this.createHtml(competitor.User.first_name + ' ' + competitor.User.last_name, capitan.Team.team_name, capitan.Team.clave_team));
                     res.status(200).json({
                         message: `Competidor agregado al equipo ${capitan.Team.team_name}`,
                         ok: true
@@ -210,7 +217,7 @@ class TeamController {
 
     }
 
-    createHtml(userName, teamName) {
+    createHtml(userName, teamName, clave) {
         return `
         <table style="width: 50%; border-collapse: collapse; border-style: hidden; margin-left: auto; margin-right: auto;" border="1">
         <tbody>
@@ -219,16 +226,18 @@ class TeamController {
         </tr>
         <tr>
         <td style="width: 49.858%;">
-        <h1 style="text-align: center;">${userName}, has sido agregado al equipo <em>"${teamName}"</em> </h1>
+        <h1 style="text-align: center;">${userName}, has sido agregado al equipo <em>"${teamName}"</em></h1>
         </td>
         </tr>
         </tbody>
         </table>
         <table style="height: 128px; width: 50%; border-collapse: collapse; border-style: none; margin-left: auto; margin-right: auto;">
         <tbody>
-        <tr style="height: 73px;"><h3 style="text-align: center;"><strong>Ahora perteneces aun equipo puedes entra a la pagina web para ver la informacion de tu equipo.</strong></h3>
+        <tr style="height: 73px;">
         <td style="width: 100%; height: 73px;">
         <h3 style="text-align: center;"><strong>Ahora perteneces aun equipo puedes entra a la pagina web para ver la informacion de tu equipo.</strong></h3>
+        <p>&nbsp;</p>
+        <p style="text-align: center;"><strong>la clave de tu equipo es :${clave}</strong></p>
         </td>
         </tr>
         <tr style="height: 55px;">
