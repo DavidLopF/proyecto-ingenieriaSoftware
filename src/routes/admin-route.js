@@ -7,7 +7,7 @@ router.get('/teams', (req, res) => {
     admin.getTems(req, res);
 })
 
-router.delete('/deleteTeam', (req, res) => {
+router.post('/deleteTeam/:team_id', (req, res) => {
     admin.deleteTeam(req, res);
 });
 

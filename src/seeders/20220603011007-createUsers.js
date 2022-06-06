@@ -8,7 +8,7 @@ module.exports = {
     const pass = await bcrypt.hash('123456', salt);
 
     let users = [];
-    for (let i = 0; i < 15; i++) {
+    for (let i = 0; i < 22; i++) {
       users.push({
         first_name: 'Juan' + i,
         last_name: 'Perez' + i,
@@ -32,6 +32,7 @@ module.exports = {
       }
     });
     await queryInterface.bulkInsert('Competitors', competitors, {});
+
   },
 
   async down(queryInterface, Sequelize) {
