@@ -28,7 +28,7 @@
                 Estos son los Equipos del Torneo de programación de la
                 Universidad el Bosque
               </div>
-              <button  class="button is-primary is-rounded is-normal" style="margin-top: 0.4%; margin-left: 5%" >
+              <button  class="button is-primary is-rounded is-normal" style="margin-top: 0.4%; margin-left: 5%" id="CSV-Download">
                 Descargar CSV
               </button>
             </div>
@@ -43,55 +43,8 @@
                   <th><abbr title="InAction">Acción</abbr></th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <th>1</th>
-                  <td>Real Madrid</td>
-                  <td>Cristian Sanchez</td>
-                  <td>Esteban Cardenas</td>
-                  <td>David Leonardo</td>
-                  <td>
-                    <button class="button is-danger is-small is-rounded">
-                      <span>Delete</span>
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <th>2</th>
-                  <td>Manchester United</td>
-                  <td>Jorge Ramirez</td>
-                  <td>Julian Silva</td>
-                  <td>Juan Manuel Perez</td>
-                  <td>
-                    <button class="button is-danger is-small is-rounded">
-                      <span>Delete</span>
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <th>3</th>
-                  <td>FC Barcelona</td>
-                  <td>Nicolas Bermudez</td>
-                  <td>Galindo Estefania</td>
-                  <td>Andres Nuñez</td>
-                  <td>
-                    <button class="button is-danger is-small is-rounded">
-                      <span>Delete</span>
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <th>4</th>
-                  <td>Liverpool</td>
-                  <td>Edgar Apellido</td>
-                  <td>Juan Felipe Ruiz</td>
-                  <td>Andres Felipe Galvis</td>
-                  <td>
-                    <button class="button is-danger is-small is-rounded">
-                      <span>Delete</span>
-                    </button>
-                  </td>
-                </tr>
+              <tbody id="teams-data" >
+                
               </tbody>
             </table>
           </div>
@@ -114,13 +67,100 @@
         id: '{{user.id}}',
         type: '{{user.type}}',
     }
-
     localStorage.setItem('user', JSON.stringify(user));
     title_message.innerHTML = 'Bienvenido ' + user.name + ': Administrador';
 
-    var dropdown = document.querySelector('.dropdown');
-    dropdown.addEventListener('click', function(event) {
-    event.stopPropagation();
-    dropdown.classList.toggle('is-active');
-});
 </script>
+<script>
+  const url = '/admin/teams';
+  let teams;
+  let teams_data;
+  const options = {
+    method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+        },
+  };
+  //fetch y traer datos
+  fetch(url, options)
+  .then(response => response.json())
+  .then(data => {
+     teams = data.Teams;
+     teams_data = document.getElementById('teams-data');
+     let contador = 0;
+  for(let tem of teams){
+    let capitan = 'No hay Capitan';
+    let competidor = [];
+    contador++;
+    for(let dat of tem.data){
+      if(dat.rol == 'Capitan'){
+        capitan = dat.name + ' ' + dat.last_name;
+      }
+      if(dat.rol == 'Competidor'){
+        competidor.push(dat.name + ' ' + dat.last_name);
+      }
+    }
+    if(competidor.length == 0){
+      competidor.push('No hay competidor #1');
+      competidor.push('No hay competidor #2');
+    }
+    if(competidor.length == 1){
+      competidor.push('No hay competidor #2');
+
+    }
+    const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <th>${contador}</th>
+        <td>${tem.team_name}</td>
+        <td>${capitan}</td>
+        <td>${competidor[0]}</td>
+        <td>${competidor[1]}</td>
+        <td>
+          <button class="button is-danger is-small is-rounded" id="delete_${tem.team_id}" >
+            <span>Delete</span>
+          </button>
+        </td>
+      `;
+      teams_data.appendChild(tr);
+
+      const delete_button = document.getElementById(`delete_${tem.team_id}`);
+      delete_button.addEventListener('click', () => {
+        const url = `/admin/deleteTeam/${tem.team_id}`;
+        const options = {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        };
+        fetch(url, options)
+        .then(response => response.json())
+        .then(data => {
+          if(data.ok == true){
+            window.location.reload();
+          }
+        })
+      })
+  }
+  })
+  
+</script>
+<script>
+  const urlPath = '/admin/csv';
+  const optionsC = {
+    method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+        },
+  };
+  //fetch y traer datos
+  fetch(urlPath, optionsC)
+  .then(response => response.json())
+  .then(data => {
+     const  pathCSV = data.path;
+     const button = document.getElementById('CSV-Download');
+      button.addEventListener('click', () => {
+        window.location.href = pathCSV;
+      });
+  })
+</script>
+

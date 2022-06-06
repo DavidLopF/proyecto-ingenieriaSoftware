@@ -163,7 +163,7 @@ class AdminController {
     }
 
     async deleteTeam(req, res) {
-        const team_id = req.body.team_id;
+        const team_id = req.params.team_id;
         const team = await db.Team.findByPk(team_id);
         const cap = await db.Captain.findOne({
             where: {
@@ -176,13 +176,17 @@ class AdminController {
                 team_id: team_id
             }
         });
-        //eliminar el capitán del equipo
-        await cap.destroy();
-        //dejar el campo team_id en null en el campo team_id de los competidores
-        for (let co of competitor) {
-            await co.update({
-                team_id: null
-            });
+        //eliminar el capitán del equipo si existe
+        if (cap) {
+            await cap.destroy();
+        }
+        //dejar el campo team_id en null en el campo team_id de los competidores si existen
+        if (competitor) {
+            for (let co of competitor) {
+                await co.update({
+                    team_id: null
+                });
+            }
         }
         //eliminar el equipo
         await team.destroy();
